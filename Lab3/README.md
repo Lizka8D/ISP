@@ -15,10 +15,10 @@
 файл XMLFile.xsd
 
 Также проект содержит файлы классы:
-Program
-Logger
-Service1
-Service1.Designer
-Installer1
-Installer1.Designer
-SymmetricEncryption
+- Program
+- Logger
+- Service1
+- Service1.Designer
+- Installer1
+- Installer1.Designer
+- SymmetricEncryption
