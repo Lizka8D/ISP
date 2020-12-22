@@ -11,7 +11,7 @@ using System.Threading.Tasks;
 
 namespace Lab4
 {
-    public partial class DataManager : ServiceBase
+    public partial class Service1 : ServiceBase
     {
         readonly DataIO appInsights;
 
@@ -45,8 +45,6 @@ namespace Lab4
         protected override void OnStop()
         {
             appInsights.InsertInsight("Service was successfully stopped");
-
-            //appInsights.WriteInsightsToXml(dataOptions.TargetFolder);
         }
     }
 }
