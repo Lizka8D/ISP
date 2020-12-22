@@ -17,7 +17,7 @@ namespace Lab4
 
         readonly DataOptions dataOptions;
 
-        public DataManager(DataOptions dataOptions, DataIO appInsights)
+        public Service1(DataOptions dataOptions, DataIO appInsights)
         {
             InitializeComponent();
 
