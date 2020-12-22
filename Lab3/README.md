@@ -22,3 +22,5 @@
 - Installer1
 - Installer1.Designer
 - SymmetricEncryption
+
+# Описание работы программы
