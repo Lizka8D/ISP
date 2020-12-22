@@ -1,6 +1,6 @@
 namespace Laba4
 {
-    partial class DataManager
+    partial class Service1
     {
         /// <summary> 
         /// Обязательная переменная конструктора.
@@ -29,7 +29,7 @@ namespace Laba4
         private void InitializeComponent()
         {
             components = new System.ComponentModel.Container();
-            this.ServiceName = "DataManager";
+            this.ServiceName = "PersonalService3";
         }
 
         #endregion
