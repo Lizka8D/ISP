@@ -1,6 +1,6 @@
 using System;
 
-namespace ServiceLib
+namespace Lab4
 {
     class ConfigurationManager : IParser
     {
