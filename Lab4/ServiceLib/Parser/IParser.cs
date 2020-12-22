@@ -1,4 +1,4 @@
-namespace Lab4
+namespace ServiceLib
 {
     interface IParser
     {
