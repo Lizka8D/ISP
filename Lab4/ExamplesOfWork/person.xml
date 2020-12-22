@@ -1,0 +1,41 @@
+<?xml version="1.0" standalone="yes"?>
+<Person>
+    <FirstName>Adam</FirstName>
+    <LastName>Barr</LastName>
+    <AccountNumber>AW00029540</AccountNumber>
+    <StoreName>Lubricant and Grease Suppliers</StoreName>
+    <CountryCode>US</CountryCode>
+    <CountryName>United States</CountryName>
+    <CurrenceCode>USD</CurrenceCode>
+    <Currency>US Dollar</Currency>
+  </Person>
+  <Person>
+    <FirstName>Adrian</FirstName>
+    <LastName>Dumitrascu</LastName>
+    <AccountNumber>AW00029726</AccountNumber>
+    <StoreName>Active Cycling</StoreName>
+    <CountryCode>US</CountryCode>
+    <CountryName>United States</CountryName>
+    <CurrenceCode>USD</CurrenceCode>
+    <Currency>US Dollar</Currency>
+  </Person>
+  <Person>
+    <FirstName>Aidan</FirstName>
+    <LastName>Delaney</LastName>
+    <AccountNumber>AW00029702</AccountNumber>
+    <StoreName>Paint Supply</StoreName>
+    <CountryCode>US</CountryCode>
+    <CountryName>United States</CountryName>
+    <CurrenceCode>USD</CurrenceCode>
+    <Currency>US Dollar</Currency>
+  </Person>
+  <Person>
+    <FirstName>Ajay</FirstName>
+    <LastName>Manchepalli</LastName>
+    <AccountNumber>AW00029978</AccountNumber>
+    <StoreName>Shipping Specialists</StoreName>
+    <CountryCode>GB</CountryCode>
+    <CountryName>United Kingdom</CountryName>
+    <CurrenceCode>GBP</CurrenceCode>
+    <Currency>United Kingdom Pound</Currency>
+  </Person>
