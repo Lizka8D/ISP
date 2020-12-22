@@ -3,7 +3,7 @@ using System.Reflection;
 using System.IO;
 using System.Text.Json;
 
-namespace Lab4
+namespace ServiceLib
 {
     class ParserJson : IParser
     {
