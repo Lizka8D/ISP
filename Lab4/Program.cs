@@ -63,7 +63,7 @@ namespace Lab4
 
             try
             {
-                DataManager service = new DataManager(dataOptions, appInsights);
+                Service1 service = new Service1(dataOptions, appInsights);
 
                 ServiceBase.Run(service);
             }
