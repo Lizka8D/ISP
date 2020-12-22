@@ -1,5 +1,17 @@
 <?xml version="1.0" standalone="yes"?>
 <Person>
+  <Person>
+    <FirstName>A.</FirstName>
+    <LastName>Leonetti</LastName>
+    <MiddleName>Francesca</MiddleName>
+    <AccountNumber>AW00029943</AccountNumber>
+    <StoreName>Two-Seater Bikes</StoreName>
+    <CountryCode>US</CountryCode>
+    <CountryName>United States</CountryName>
+    <CurrenceCode>USD</CurrenceCode>
+    <Currency>US Dollar</Currency>
+  </Person>
+    <Person>
     <FirstName>Adam</FirstName>
     <LastName>Barr</LastName>
     <AccountNumber>AW00029540</AccountNumber>
@@ -39,3 +51,4 @@
     <CurrenceCode>GBP</CurrenceCode>
     <Currency>United Kingdom Pound</Currency>
   </Person>
+</Person>
