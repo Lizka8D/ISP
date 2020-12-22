@@ -2,7 +2,7 @@ using System;
 using System.Reflection;
 using System.Xml;
 
-namespace Lab4
+namespace ServiceLib
 {
     class ParserXML : IParser
     {
