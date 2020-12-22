@@ -1,0 +1,13 @@
+11 lines (11 sloc)  497 Bytes
+  
+<?xml version="1.0" encoding="utf-8" ?>
+<settings>
+  <SourcePath>C:\Users\lizab\Desktop\Study\Progs\3_semester\C#\SourceDirectory</SourcePath>
+  <TargetPath>C:\Users\lizab\Desktop\Study\Progs\3_semester\C#\TargetDirectory</TargetPath>
+  <Parth_FileLog>C:\Users\lizab\Desktop\\Study\Progs\3_semester\C#\FileLog.txt</Parth_FileLog>
+  <NeedToEncrypt>true</NeedToEncrypt>
+  <ArchiveOptions>
+    <NeedToMove>false</NeedToMove>
+    <NeedToCompress>false</NeedToCompress>
+  </ArchiveOptions>
+</settings>
