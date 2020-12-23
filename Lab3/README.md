@@ -14,7 +14,7 @@
   - файл XMLFile.xml
   - файл XMLFile.xsd
 
-Также проект содержит файлы классы:
+Также проект содержит классы:
 - Program
 - Logger
 - Service1
