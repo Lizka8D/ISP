@@ -16,10 +16,10 @@
 
 > Папка ServiceLib содержит:
   - папку Parser, которая содержит:
-   - класс ConfigurationManager
-   - интерфейс IParser
-   - класс ParserJson
-   - класс ParserXML
+  - - класс ConfigurationManager
+  -- интерфейс IParser
+  - -класс ParserJson
+  --класс ParserXML
 - класс DataIO
 - класс FileTransfer
 - класс XmlGenerator
