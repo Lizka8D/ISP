@@ -8,18 +8,18 @@
 - файл dataOptions.xsd
 
 > Папка ExamplesOfWork содержит:
-файл JsonFile.json
-файл XMLFile.xml
+- файл JsonFile.json
+- файл XMLFile.xml
 
 > Папка FileWatcher содержит:
 - все классы и файлы из Lab3
 
 > Папка ServiceLib содержит:
   - папку Parser, которая содержит:
-  - - класс ConfigurationManager
-  - - интерфейс IParser
-  - - класс ParserJson
-  - - класс ParserXML
+   - класс ConfigurationManager
+   - интерфейс IParser
+   - класс ParserJson
+   - класс ParserXML
 - класс DataIO
 - класс FileTransfer
 - класс XmlGenerator
