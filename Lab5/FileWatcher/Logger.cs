@@ -39,32 +39,30 @@ namespace Lab3
         {
             WriteToFileAsync($"Service was started at {DateTime.Now:dd/MM/yyyy HH:mm:ss}\n");
             watcher.EnableRaisingEvents = true;
-            while (enabled)
-            {
-                Thread.Sleep(1000);
-            }
+            timer.Start();
         }
         public void Stop()
         {
+            timer.Stop();
             watcher.EnableRaisingEvents = false;
-            enabled = false;
+            messages.Clear();
             WriteToFileAsync($"Service was stopped at {DateTime.Now:dd/MM/yyyy HH:mm:ss}\n");
         }
          private async void OnElapsedTime(object sender, ElapsedEventArgs e)
         {
             if (!Directory.Exists(options.SourcePath))
             {
-                await Task.Run(() => Directory.CreateDirectory(options.SourcePath));
+                await Task.Run(() => Directory.CreateFolders(options.SourcePath));
                 watcher = new FileSystemWatcher(options.SourcePath);
-                watcher.Deleted += OnDeleted;
-                watcher.Created += OnCreated;
-                watcher.Changed += OnChanged;
-                watcher.Renamed += OnRenamed;
+                watcher.Deleted += Watcher_Deleted;
+                watcher.Created += Watcher_Created;
+                watcher.Changed += Watcher_Changed;
+                watcher.Renamed += Watcher_Renamed;
                 watcher.EnableRaisingEvents = true;
             }
             if (!Directory.Exists(options.TargetPath))
             {
-                await Task.Run(() => Directory.CreateDirectory(options.TargetPath));
+                await Task.Run(() => Directory.CreateFolders(options.TargetPath));
             }
             if (messages.Length > 0)
             {
@@ -132,7 +130,7 @@ namespace Lab3
 
                 if (!Directory.Exists(decompressedFilePath))
                 {
-                    await Task.Run(() => Directory.CreateDirectory(decompressedFilePath));
+                    await Task.Run(() => Directory.CreateFolders(decompressedFilePath));
                 }
                 if (options.ArchiveOptions.NeedToArchive)
                 {
@@ -182,7 +180,47 @@ namespace Lab3
             string filePath = e.FullPath;
             RecordEntry(fileEvent, filePath);
         }
-
+         public Task WriteToFileAsync(string message)
+        {
+            if (!Directory.Exists(options.SourcePath))
+            {
+                Directory.CreateDirectory(options.SourcePath);
+                watcher = new FileSystemWatcher(options.SourcePath);
+                watcher.Deleted += OnDeleted;
+                watcher.Created += OnCreated;
+                watcher.Changed += OnChanged;
+                watcher.Renamed += OnRenamed;
+                watcher.EnableRaisingEvents = true;
+            }
+            if (!Directory.Exists(options.TargetPath))
+            {
+                Directory.CreateDirectory(options.TargetPath);
+            }
+            using (StreamWriter sw = new StreamWriter(options.LogFilePath, true))
+            {
+                return sw.WriteAsync(message);
+            }
+        }
+        async Task CompressAsync(string sourceFile, string compressedFile)
+        {
+            await Task.Run(() =>
+            {
+                using (FileStream sourceStream = new FileStream(sourceFile, FileMode.Open))
+                {
+                    using (FileStream targetStream = new FileStream(compressedFile, FileMode.OpenOrCreate))
+                    {
+                        using (GZipStream compressionStream = new GZipStream(targetStream, options.ArchiveOptions.Level))
+                        {
+                            sourceStream.CopyTo(compressionStream);
+                        }
+                    }
+                }
+            });
+        }
+         void AddToMessages(string filePath, string fileEvent)
+        {
+            messages.Append($"{DateTime.Now:dd/MM/yyyy HH:mm:ss} file {filePath} was {fileEvent}\n");
+        }
         private void RecordEntry(string fileEvent, string filePath)
         {
             lock (obj)
