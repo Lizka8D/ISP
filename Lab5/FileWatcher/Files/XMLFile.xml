@@ -5,7 +5,7 @@
   <Parth_FileLog>C:\Users\lizab\Desktop\\Study\Progs\3_semester\C#\FileLog.txt</Parth_FileLog>
   <NeedToEncrypt>true</NeedToEncrypt>
   <ArchiveOptions>
-    <NeedToMove>false</NeedToMove>
-    <NeedToCompress>false</NeedToCompress>
+    <NeedToArchive>false</NeedToArchive>
+    <Level>Fastest</Level>
   </ArchiveOptions>
 </settings>
