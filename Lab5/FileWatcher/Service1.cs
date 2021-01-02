@@ -5,6 +5,8 @@ using System.ServiceProcess;
 using System.Threading;
 using System.Xml.Schema;
 using System.Xml.Linq;
+using ServiceLib;
+using System.Threading.Tasks;
 
 namespace Lab3
 {
@@ -16,7 +18,7 @@ namespace Lab3
             InitializeComponent();
         }
 
-        protected override void OnStart(string[] args)
+        protected override async void OnStart(string[] args)
         {
             ConfigurationManager configManager;
 
@@ -42,7 +44,7 @@ namespace Lab3
                 throw new ArgumentNullException($"No config was found");
             }
 
-            Options options = configManager.GetOptions<Options>();
+            Options options = await Task.Run(() => configManager.GetOptions<Options>());
 
             logger = new Logger(options);
 
