@@ -10,7 +10,7 @@ namespace Lab3
         /// <summary>
         /// Главная точка входа для приложения.
         /// </summary>
-        static void Main()
+        static async Task void Main()
         {
             Service1 myService = new Service1();
             
