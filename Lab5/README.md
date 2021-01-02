@@ -20,7 +20,7 @@
 # Описание программы
 В данной лабораторной работе был проведен рефакторинг кода для добавления асинхоенного поведения. Используются два сервиса, созданные в ранних лабораторных работах, FileWatcher(Lab 3) и DataManager(Lab 4). Для выполнения условия был переработан код в следующих файлах:
 - ServiceLib\DataIO.cs
-- ServiceLib\FileTrancser.cs
+- ServiceLib\FileTransfer.cs
 - ServiceLib\XmlGenerator.cs
 
 - FileWatcher\Service1.cs
