@@ -84,7 +84,7 @@ namespace Lab3
                 newFileName += fileInfo.Extension;
                 string newFilePath = Path.Combine(options.SourcePath, newFileName);
                 string newTargetPath = Path.Combine(options.TargetPath, newFileName);
-                if (options.ArchiveOptions.NeedToMove)
+                if (options.ArchiveOptions.NeedToArchive)
                 {
                     string temp = newFileName;
                     newFileName += ".zip";
