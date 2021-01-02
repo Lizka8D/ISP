@@ -9,7 +9,10 @@ namespace Lab3
 {
     class Logger
     {
-        private readonly FileSystemWatcher watcher;
+        private FileSystemWatcher watcher;
+        private readonly Timer timer = new Timer();
+        private readonly StringBuilder messages = new StringBuilder();
+        private readonly List<string> createdFiles = new List<string>();
         private readonly Options options;
         private readonly object obj = new object();
         bool enabled = true;
@@ -48,11 +51,11 @@ namespace Lab3
             messages.Clear();
             WriteToFileAsync($"Service was stopped at {DateTime.Now:dd/MM/yyyy HH:mm:ss}\n");
         }
-         private async void OnElapsedTime(object sender, ElapsedEventArgs e)
+        private async void OnElapsedTime(object sender, ElapsedEventArgs e)
         {
             if (!Directory.Exists(options.SourcePath))
             {
-                await Task.Run(() => Directory.CreateFolders(options.SourcePath));
+                await Task.Run(() => Directory.CreateDirectory(options.SourcePath));
                 watcher = new FileSystemWatcher(options.SourcePath);
                 watcher.Deleted += Watcher_Deleted;
                 watcher.Created += Watcher_Created;
@@ -62,7 +65,7 @@ namespace Lab3
             }
             if (!Directory.Exists(options.TargetPath))
             {
-                await Task.Run(() => Directory.CreateFolders(options.TargetPath));
+                await Task.Run(() => Directory.CreateDirectory(options.TargetPath));
             }
             if (messages.Length > 0)
             {
@@ -81,10 +84,10 @@ namespace Lab3
                 newFileName += fileInfo.Extension;
                 string newFilePath = Path.Combine(options.SourcePath, newFileName);
                 string newTargetPath = Path.Combine(options.TargetPath, newFileName);
-                if (options.ArchiveOptions.NeedToArchive)
+                if (options.ArchiveOptions.NeedToMove)
                 {
                     string temp = newFileName;
-                    newFileName += ".gz";
+                    newFileName += ".zip";
                     newFilePath = Path.Combine(options.SourcePath, newFileName);
                     newTargetPath = Path.Combine(options.TargetPath, newFileName);
                     int counter = 1;
@@ -130,7 +133,7 @@ namespace Lab3
 
                 if (!Directory.Exists(decompressedFilePath))
                 {
-                    await Task.Run(() => Directory.CreateFolders(decompressedFilePath));
+                    await Task.Run(() => Directory.CreateDirectory(decompressedFilePath));
                 }
                 if (options.ArchiveOptions.NeedToArchive)
                 {
@@ -157,39 +160,39 @@ namespace Lab3
         {
             string fileEvent = "переименован в " + e.FullPath;
             string filePath = e.OldFullPath;
-            RecordEntry(fileEvent, filePath);
+            AddToMessages(filePath, fileEvent);
         }
         // изменение файлов
         private void Watcher_Changed(object sender, FileSystemEventArgs e)
         {
             string fileEvent = "изменен";
             string filePath = e.FullPath;
-            RecordEntry(fileEvent, filePath);
+            AddToMessages(filePath, fileEvent);
         }
         // создание файлов
         private void Watcher_Created(object sender, FileSystemEventArgs e)
         {
             string fileEvent = "создан";
             string filePath = e.FullPath;
-            RecordEntry(fileEvent, filePath);
+            AddToMessages(filePath, fileEvent);
         }
         // удаление файлов
         private void Watcher_Deleted(object sender, FileSystemEventArgs e)
         {
             string fileEvent = "удален";
             string filePath = e.FullPath;
-            RecordEntry(fileEvent, filePath);
+            AddToMessages(filePath, fileEvent);
         }
-         public Task WriteToFileAsync(string message)
+        public Task WriteToFileAsync(string message)
         {
             if (!Directory.Exists(options.SourcePath))
             {
                 Directory.CreateDirectory(options.SourcePath);
                 watcher = new FileSystemWatcher(options.SourcePath);
-                watcher.Deleted += OnDeleted;
-                watcher.Created += OnCreated;
-                watcher.Changed += OnChanged;
-                watcher.Renamed += OnRenamed;
+                watcher.Deleted += Watcher_Deleted;
+                watcher.Created += Watcher_Created;
+                watcher.Changed += Watcher_Changed;
+                watcher.Renamed += Watcher_Renamed;
                 watcher.EnableRaisingEvents = true;
             }
             if (!Directory.Exists(options.TargetPath))
@@ -200,6 +203,10 @@ namespace Lab3
             {
                 return sw.WriteAsync(message);
             }
+        }
+        void AddToMessages(string filePath, string fileEvent)
+        {
+            messages.Append($"{DateTime.Now:dd/MM/yyyy HH:mm:ss} file {filePath} was {fileEvent}\n");
         }
         async Task CompressAsync(string sourceFile, string compressedFile)
         {
@@ -217,190 +224,21 @@ namespace Lab3
                 }
             });
         }
-         void AddToMessages(string filePath, string fileEvent)
+        async Task DecompressAsync(string compressedFile, string targetFile)
         {
-            messages.Append($"{DateTime.Now:dd/MM/yyyy HH:mm:ss} file {filePath} was {fileEvent}\n");
-        }
-        private void RecordEntry(string fileEvent, string filePath)
-        {
-            lock (obj)
-            {
-                using (StreamWriter writer = new StreamWriter(this.options.LogFilePath, true))
-                {
-                    writer.WriteLine(String.Format("{0} файл {1} был {2}",
-                        DateTime.Now.ToString("dd/MM/yyyy hh:mm:ss"), filePath, fileEvent));
-                    writer.Close();
-                }
-                if (fileEvent == "изменен")
-                {
-                    FunctionalityOfService(options.SourcePath.Split((char)92)[filePath.Split((char)92).Length - 1]);
-                }
-            }
-        }
-        public void FunctionalityOfService(string FileName)
-        {
-            FileInfo Info = new FileInfo(options.SourcePath + FileName);
-            string newPath = " ";
-            string cipherText = " ";
-
-            string passPhrase = "TestPassphrase";
-            string saltValue = "TestSaltValue";
-            string hashAlgorithm = "SHA256";
-            int passwordIterations = 2;
-            string initVector = "!1A3g2D4s9K556g7";
-            int keySize = 256;
-
-            while (true)
-            {
-                if (options.NeedToEncrypt)
-                {
-                    cipherText = SymmetricEncryption.Encrypt
-                    (
-                        ReadFile(options.SourcePath + FileName),
-                        passPhrase,
-                        saltValue,
-                        hashAlgorithm,
-                        passwordIterations,
-                        initVector,
-                        keySize
-                    );
-
-                    OverwriteFile(options.SourcePath + FileName, cipherText);
-
-                    options.NeedToEncrypt = false;
-                    options.ArchiveOptions.NeedToCompress = true;
-
-                }
-                else
-                {
-                    string plainText = SymmetricEncryption.Decrypt
-                    (
-                        cipherText,
-                        passPhrase,
-                        saltValue,
-                        hashAlgorithm,
-                        passwordIterations,
-                        initVector,
-                        keySize
-                    );
-
-                    OverwriteFile(newPath + FileName, plainText);
-
-                    break;
-                }
-                if (options.ArchiveOptions.NeedToCompress)
-                {
-                    newPath = CreateFolders(Info);
-                    string newFileName = $"\\{Info.CreationTime.Year}_{Info.CreationTime.Month}_{Info.CreationTime.Day}_{Info.CreationTime.Hour}" +
-                        $"_{Info.CreationTime.Minute}_{Info.CreationTime.Second}.txt";
-
-                    File.Copy(options.SourcePath + FileName, options.SourcePath + newFileName, true);
-                    File.Delete(options.SourcePath + FileName);
-
-                    Compress(options.SourcePath + newFileName, newFileName);
-
-                    File.Delete(options.SourcePath + newFileName);
-
-                    options.ArchiveOptions.NeedToCompress = false;
-                    options.ArchiveOptions.NeedToMove = true;
-                }
-                else
-                {
-                    string oldFileName = FileName;
-                    Decompress(newPath + FileName, FileName);
-                    File.Delete(newPath + oldFileName);
-
-                    options.NeedToEncrypt = true;
-                }
-                if (options.ArchiveOptions.NeedToMove)
-                {
-                    File.Copy(options.SourcePath + FileName, newPath + FileName, true);
-                    File.Copy(options.SourcePath + FileName, newPath + "\\Archive" + FileName, true);
-
-                    File.Delete(options.SourcePath + FileName);
-
-                    options.ArchiveOptions.NeedToMove = false;
-                    options.ArchiveOptions.NeedToCompress = true;
-                }
-            }
-        }
-        private string ReadFile(string path)
-        {
-            FileStream fstream;
-            string textFromFile = " ";
-            using (fstream = File.OpenRead(path))
-            {
-                byte[] array = new byte[fstream.Length];
-                fstream.Read(array, 0, array.Length);
-                textFromFile = Encoding.Default.GetString(array);
-            }
-
-            return textFromFile;
-        }
-        private void OverwriteFile(string path, string cipherText)
-        {
-            FileStream fstream;
-            using (fstream = new FileStream(path, FileMode.Truncate))
-            {
-                byte[] array = Encoding.Default.GetBytes(cipherText);
-                fstream.Write(array, 0, array.Length);
-            }
-        }
-        private void Compress(string sourceFile, string newFileName)
-        {
-            string compressedFile = sourceFile.Replace(".txt", ".rar");
-            newFileName.Replace(".txt", ".rar");
-
-            using (FileStream sourceStream = new FileStream(sourceFile, FileMode.OpenOrCreate))
-            {
-                using (FileStream targetStream = File.Create(compressedFile))
-                {
-                    using (GZipStream compressionStream = new GZipStream(targetStream, CompressionMode.Compress))
-                    {
-                        sourceStream.CopyTo(compressionStream);
-                    }
-                }
-            }
-        }
-        private void Decompress(string compressedFile, string FileName)
-        {
-            string targetFile = compressedFile.Replace(".rar", ".txt");
-            FileName.Replace(".rar", ".txt");
-
-            FileInfo fileInfo = new FileInfo(compressedFile);
-            if (fileInfo.Exists)
+            await Task.Run(() =>
             {
                 using (FileStream sourceStream = new FileStream(compressedFile, FileMode.Open))
                 {
-                    using (FileStream targetStream = File.Create(targetFile))
+                    using (FileStream targetStream = new FileStream(targetFile, FileMode.OpenOrCreate))
                     {
-                        using (GZipStream decompressionStream =
-                            new GZipStream(sourceStream, CompressionMode.Decompress))
+                        using (GZipStream decompressionStream = new GZipStream(sourceStream, CompressionMode.Decompress))
                         {
                             decompressionStream.CopyTo(targetStream);
                         }
                     }
                 }
-            }
-            else
-            {
-                using (StreamWriter writer = new StreamWriter(options.LogFilePath, true))
-                {
-                    writer.WriteLine("Error. Compressed file don't exist.");
-                    writer.Close();
-                }
-            }
-
-        }
-        private string CreateFolders(FileInfo Info)
-        {
-            string year = Info.CreationTime.Year.ToString();
-            string month = Info.CreationTime.Month.ToString();
-            string day = Info.CreationTime.Day.ToString();
-            string path = $"{options.TargetPath}\\{year}\\{month}\\{day}";
-            Directory.CreateDirectory(path);
-            Directory.CreateDirectory(path + "\\Archive");
-            return path;
+            });
         }
     }
 }
