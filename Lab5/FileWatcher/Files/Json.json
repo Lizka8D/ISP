@@ -4,7 +4,7 @@
   "Parth_FileLog": "C:\\Users\\lizab\\Desktop\\Study\\Progs\\3_semester\\C#\\FileLog.txt",
   "NeedToEncrypt": true,
   "ArchiveOptions": {
-    "NeedToMove": false,
-    "NeedToCompress": false
+    "NeedToArchive": true,
+    "Level": 1
   }
 }
