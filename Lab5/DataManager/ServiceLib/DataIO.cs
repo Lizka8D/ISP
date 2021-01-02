@@ -11,164 +11,176 @@ namespace ServiceLib
 
         public DataIO(string connectionString)
         {
-            this.connectionString = connectionString;
+            connectionString = connectionString;
         }
 
-        public void ClearInsights()
+        public Task void ClearInsights()
         {
-            using (SqlConnection connection = new SqlConnection(connectionString))
+             return Task.Run(() =>
             {
-                connection.Open();
-                SqlTransaction transaction = connection.BeginTransaction();
-
-                SqlCommand command = new SqlCommand("sp_ClearInsight", connection);
-
-                command.CommandType = CommandType.StoredProcedure;
-                command.Transaction = transaction;
-
-                try
+                using (SqlConnection connection = new SqlConnection(connectionString))
                 {
-                    command.ExecuteNonQuery();
+                    connection.Open();
+                    SqlTransaction transaction = connection.BeginTransaction();
 
-                    transaction.Commit();
-                }
-                catch (Exception ex)
-                {
-                    using (StreamWriter sw = new StreamWriter(Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "Exceptions.txt"), true))
+                    SqlCommand command = new SqlCommand("sp_ClearInsight", connection);
+
+                    command.CommandType = CommandType.StoredProcedure;
+                    command.Transaction = transaction;
+
+                    try
                     {
-                        sw.WriteLine($"{DateTime.Now:dd/MM/yyyy HH:mm:ss} 1Exception: {ex.Message}");
+                        command.ExecuteNonQuery();
+
+                        transaction.Commit();
                     }
-
-                    transaction.Rollback();
-                }
-            }
-        }
-
-        public void InsertInsight(string message)
-        {
-            using (SqlConnection connection = new SqlConnection(connectionString))
-            {
-                connection.Open();
-                SqlTransaction transaction = connection.BeginTransaction();
-
-                SqlCommand command = new SqlCommand("sp_AddInsight", connection);
-
-                command.CommandType = CommandType.StoredProcedure;
-                command.Transaction = transaction;
-
-                try
-                {
-                    SqlParameter messageParam = new SqlParameter
+                    catch (Exception ex)
                     {
-                        ParameterName = "@message",
-                        Value = message
-                    };
+                        using (StreamWriter sw = new StreamWriter(Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "Exceptions.txt"), true))
+                        {
+                            sw.WriteLine($"{DateTime.Now:dd/MM/yyyy HH:mm:ss} 1Exception: {ex.Message}");
+                        }
 
-                    SqlParameter timeParam = new SqlParameter
-                    {
-                        ParameterName = "@time",
-                        Value = DateTime.Now
-                    };
-
-                    command.Parameters.AddRange(new[] { messageParam, timeParam });
-
-                    command.ExecuteNonQuery();
-
-                    transaction.Commit();
-                }
-                catch (Exception ex)
-                {
-                    using (StreamWriter sw = new StreamWriter(Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "Exceptions.txt"), true))
-                    {
-                        sw.WriteLine($"{DateTime.Now:dd/MM/yyyy HH:mm:ss} 2Exception: {ex.Message}");
+                        transaction.Rollback();
                     }
-
-                    transaction.Rollback();
                 }
-            }
+            });
         }
 
-        public void WriteInsightsToXml(string outputFolder)
+        public Task void InsertInsight(string message)
         {
-            using (SqlConnection connection = new SqlConnection(connectionString))
+            return Task.Run(() =>
             {
-                connection.Open();
-                SqlTransaction transaction = connection.BeginTransaction();
-
-                SqlCommand command = new SqlCommand("sp_GetInsight", connection);
-
-                command.CommandType = CommandType.StoredProcedure;
-                command.Transaction = transaction;
-
-                try
+                using (SqlConnection connection = new SqlConnection(connectionString))
                 {
-                    SqlDataAdapter adapter = new SqlDataAdapter(command);
+                    connection.Open();
+                    SqlTransaction transaction = connection.BeginTransaction();
 
-                    DataSet dataSet = new DataSet("Insights");
+                    SqlCommand command = new SqlCommand("sp_AddInsight", connection);
 
-                    DataTable dataTable = new DataTable("Insight");
+                    command.CommandType = CommandType.StoredProcedure;
+                    command.Transaction = transaction;
 
-                    dataSet.Tables.Add(dataTable);
-
-                    adapter.Fill(dataSet.Tables["Insight"]);
-
-                    XmlGenerator xmlGenerator = new XmlGenerator(outputFolder);
-
-                    xmlGenerator.WriteToXml(dataSet, "appInsights");
-
-                    transaction.Commit();
-                }
-                catch (Exception ex)
-                {
-                    using (StreamWriter sw = new StreamWriter(Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "Exceptions.txt"), true))
+                    try
                     {
-                        sw.WriteLine($"{DateTime.Now:dd/MM/yyyy HH:mm:ss} 3Exception: {ex.Message}");
-                    }
+                        SqlParameter messageParam = new SqlParameter
+                        {
+                            ParameterName = "@message",
+                            Value = message
+                        };
 
-                    transaction.Rollback();
+                        SqlParameter timeParam = new SqlParameter
+                        {
+                            ParameterName = "@time",
+                            Value = DateTime.Now
+                        };
+
+                        command.Parameters.AddRange(new[] { messageParam, timeParam });
+
+                        command.ExecuteNonQuery();
+
+                        transaction.Commit();
+                    }
+                    catch (Exception ex)
+                    {
+                        using (StreamWriter sw = new StreamWriter(Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "Exceptions.txt"), true))
+                        {
+                            sw.WriteLine($"{DateTime.Now:dd/MM/yyyy HH:mm:ss} 2Exception: {ex.Message}");
+                        }
+
+                        transaction.Rollback();
+                    }
                 }
-            }
+            });
         }
 
-        public void GetCustomers(string outputFolder, DataIO appInsights, string customersFileName)
+        public Task void WriteInsightsToXml(string outputFolder)
         {
-            using (SqlConnection connection = new SqlConnection(connectionString))
+             return Task.Run(async () =>
             {
-                connection.Open();
-                SqlTransaction transaction = connection.BeginTransaction();
-
-                SqlCommand command = new SqlCommand("sp_GetPerson", connection);
-
-                command.CommandType = CommandType.StoredProcedure;
-                command.Transaction = transaction;
-
-                try
+                using (SqlConnection connection = new SqlConnection(connectionString))
                 {
-                    SqlDataAdapter adapter = new SqlDataAdapter(command);
+                    connection.Open();
+                    SqlTransaction transaction = connection.BeginTransaction();
 
-                    DataSet dataSet = new DataSet("Person");
+                    SqlCommand command = new SqlCommand("sp_GetInsight", connection);
 
-                    DataTable dataTable = new DataTable("Person");
+                    command.CommandType = CommandType.StoredProcedure;
+                    command.Transaction = transaction;
 
-                    dataSet.Tables.Add(dataTable);
+                    try
+                    {
+                        SqlDataAdapter adapter = new SqlDataAdapter(command);
 
-                    adapter.Fill(dataSet.Tables["Person"]);
+                        DataSet dataSet = new DataSet("Insights");
 
-                    XmlGenerator xmlGenerator = new XmlGenerator(outputFolder);
+                        DataTable dataTable = new DataTable("Insight");
 
-                    xmlGenerator.WriteToXml(dataSet, customersFileName);
+                        dataSet.Tables.Add(dataTable);
 
-                    appInsights.InsertInsight("Persons were received successfully");
+                        adapter.Fill(dataSet.Tables["Insight"]);
 
-                    transaction.Commit();
+                        XmlGenerator xmlGenerator = new XmlGenerator(outputFolder);
+
+                        xmlGenerator.WriteToXml(dataSet, "appInsights");
+
+                        transaction.Commit();
+                    }
+                    catch (Exception ex)
+                    {
+                        using (StreamWriter sw = new StreamWriter(Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "Exceptions.txt"), true))
+                        {
+                            sw.WriteLine($"{DateTime.Now:dd/MM/yyyy HH:mm:ss} 3Exception: {ex.Message}");
+                        }
+
+                        transaction.Rollback();
+                    }
                 }
-                catch (Exception ex)
+             });
+        }
+
+        public Task void GetCustomers(string outputFolder, DataIO appInsights, string customersFileName)
+        {
+             return Task.Run(async () =>
+            {
+                using (SqlConnection connection = new SqlConnection(connectionString))
                 {
-                    appInsights.InsertInsight("EXCEPTION: " + ex.Message);
+                    connection.Open();
+                    SqlTransaction transaction = connection.BeginTransaction();
 
-                    transaction.Rollback();
+                    SqlCommand command = new SqlCommand("sp_GetPerson", connection);
+
+                    command.CommandType = CommandType.StoredProcedure;
+                    command.Transaction = transaction;
+
+                    try
+                    {
+                        SqlDataAdapter adapter = new SqlDataAdapter(command);
+
+                        DataSet dataSet = new DataSet("Person");
+
+                        DataTable dataTable = new DataTable("Person");
+
+                        dataSet.Tables.Add(dataTable);
+
+                        adapter.Fill(dataSet.Tables["Person"]);
+
+                        XmlGenerator xmlGenerator = new XmlGenerator(outputFolder);
+
+                        xmlGenerator.WriteToXml(dataSet, customersFileName);
+
+                        appInsights.InsertInsight("Persons were received successfully");
+
+                        transaction.Commit();
+                    }
+                    catch (Exception ex)
+                    {
+                        appInsights.InsertInsight("EXCEPTION: " + ex.Message);
+
+                        transaction.Rollback();
+                    }
                 }
-            }
+            });
         }
     }
 }
