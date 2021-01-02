@@ -47,15 +47,15 @@ namespace Lab4
 
                 appInsights = new DataIO(dataOptions.LoggerConnectionString);
 
-                appInsights.ClearInsights();
+                await appInsights.ClearInsights();
 
-                appInsights.InsertInsight("Connection was successfully established");
+                await appInsights.InsertInsight("Connection was successfully established");
             }
             catch (Exception ex)
             {
                 using (StreamWriter sw = new StreamWriter(Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "Exceptions.txt"), true))
                 {
-                    sw.WriteLine($"{DateTime.Now:dd/MM/yyyy HH:mm:ss} Exception: {ex.Message}");
+                    await sw.WriteLine($"{DateTime.Now:dd/MM/yyyy HH:mm:ss} Exception: {ex.Message}");
                 }
 
                 return;
@@ -69,9 +69,8 @@ namespace Lab4
             }
             catch (Exception ex)
             {
-                appInsights.InsertInsight("EXCEPTION: " + ex.Message);
-
-                appInsights.WriteInsightsToXml(dataOptions.TargetFolder);
+                await appInsights.InsertInsightAsync("EXCEPTION: " + ex.Message);
+                await appInsights.WriteInsightsToXmlAsync(dataOptions.TargetFolder);
             }
         }
 
