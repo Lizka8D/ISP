@@ -1,0 +1,6 @@
+{
+  "ConnectionString": "Data Source = Desctop-User;Initial Catalog = AdventureWorks;Integrated Security = True",
+  "LoggerConnectionString": "Data Source = Desctop-User;Initial Catalog = ApplicationInsights;Integrated Security = True",
+  "SourcePath": "C:\\Users\\lizab\\Desktop\\Study\\Progs\\3_semester\\C#\\SourceDirectory",
+  "TargetFolder": "C:\\Users\\lizab\\Desktop\\Study\\Progs\\3_semester\\C#\\TargetDirectory"
+}
