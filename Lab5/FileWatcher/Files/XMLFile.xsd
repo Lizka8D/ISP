@@ -10,8 +10,8 @@
         <xs:element name="ArchiveOptions">
           <xs:complexType>
             <xs:sequence>
-              <xs:element name="NeedToMove" type="xs:boolean" />
-              <xs:element name="NeedToCompress" type="xs:boolean" />
+              <xsd:element name="NeedToArchive" type="xsd:boolean" />
+              <xsd:element name="Level" type="xsd:string" />
             </xs:sequence>
           </xs:complexType>
         </xs:element>
